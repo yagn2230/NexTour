@@ -64,9 +64,7 @@ app.use(
         return callback(null, true);
       }
 
-      if (
-        uniqueAllowedOrigins.includes(origin)
-      ) {
+      if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
