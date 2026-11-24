@@ -7,9 +7,13 @@ const asyncHandler = (fn) => (req, res, next) => {
 
 // Centralized Express Error Handler
 const errorHandler = (err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
+
   console.error("Error Log:", err);
 
-  let statusCode = err.statusCode || 500;
+  let statusCode = err.statusCode || err.status || 500;
   let message = err.message || "Internal Server Error";
 
   // Mongoose Bad ObjectId (CastError)

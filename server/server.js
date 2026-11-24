@@ -42,20 +42,19 @@ const app = express();
 
 app.set("trust proxy", 1);
 
-const allowedOrigins = [
-  ...(process.env.NODE_ENV === "production"
-    ? []
-    : [
+const localOrigins = process.env.NODE_ENV === "production"
+  ? []
+  : [
       "http://localhost:5173",
       "http://127.0.0.1:5173",
       "http://localhost:4173",
       "http://127.0.0.1:4173",
-    ]),
-  ...(process.env.CORS_ORIGINS || "")
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean),
-];
+    ];
+const configuredOrigins = [
+  ...(process.env.CLIENT_URL || "").split(","),
+  ...(process.env.CORS_ORIGINS || "").split(","),
+].map((origin) => origin.trim()).filter(Boolean);
+const allowedOrigins = [...new Set([...localOrigins, ...configuredOrigins])];
 
 // Middleware
 app.use(
@@ -66,7 +65,7 @@ app.use(
       }
 
       if (
-        allowedOrigins.includes(origin)
+        uniqueAllowedOrigins.includes(origin)
       ) {
         return callback(null, true);
       }
@@ -75,7 +74,7 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Cookie"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
 
@@ -110,7 +109,7 @@ app.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // 1 day
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       secure: process.env.NODE_ENV === "production",
     },
   })
@@ -139,6 +138,22 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/health", (req, res) => {
+  const databaseConnected = mongoose.connection.readyState === 1;
+  res.status(databaseConnected ? 200 : 503).json({
+    success: databaseConnected,
+    status: databaseConnected ? "ok" : "unavailable",
+    database: databaseConnected ? "connected" : "disconnected",
+  });
+});
+
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Route not found: ${req.method} ${req.originalUrl}`,
+  });
+});
+
 // Centralized Error Handling Middleware
 app.use(errorHandler);
 
@@ -155,5 +170,6 @@ mongoose
     });
   })
   .catch((error) => {
-    console.log("MongoDB connection error:", error);
+    console.error("MongoDB startup error:", error);
+    process.exit(1);
   });

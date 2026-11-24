@@ -2,11 +2,13 @@
 
 ## Configuration
 
-Set `MONGODB_URI` and a strong `SESSION_SECRET` in the server environment. MongoDB must run as a replica set (including local development) because booking acceptance, payment completion, cancellations, and chat writes use transactions. Set `JWT_SECRET` when enabling bearer-token login responses. Set `PORT` to override the default port 5000. The frontend uses `http://localhost:5000` in development. For production, set `VITE_API_BASE_URL` to the API origin or reverse-proxy API paths through the frontend origin; configure `CORS_ORIGINS` as comma-separated exact frontend origins when using a separate API origin.
+Set `MONGODB_URI`, a strong `SESSION_SECRET`, `JWT_SECRET`, and `CLIENT_URL` in the server environment. Render supplies `PORT`; locally it defaults to 5000. MongoDB must run as a replica set (including local development) because booking acceptance, payment completion, cancellations, and chat writes use transactions. `JWT_SECRET` enables bearer-token login responses for reliable cross-site authentication. The frontend uses `http://localhost:5000` in development and defaults to `https://nextour-1.onrender.com` in production; configure `VITE_API_BASE_URL` to override it. `CLIENT_URL` and optional comma-separated `CORS_ORIGINS` must contain the exact deployed frontend origins.
 
 Development checkout can be simulated with `NODE_ENV=development` and `PAYMENT_MODE=demo`; demo payments never move real money and are unavailable in production. To enable Razorpay, configure `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` with keys from the Razorpay Dashboard. Use test-mode keys for development and live-mode keys only after completing Razorpay's merchant onboarding. Configure a Razorpay webhook for `payment.captured` at `/payments/razorpay/webhook`, and set its signing secret as `RAZORPAY_WEBHOOK_SECRET`. Do not commit any of these secrets. Online payments are collected into the configured Razorpay merchant account; organizer payouts are not implemented by this integration.
 
-Production sessions set the `Secure` cookie attribute and do not allow development localhost origins. Serve the API over HTTPS and configure exact production frontend origins.
+Production sessions use `SameSite=None; Secure` cookies for the separate Vercel and Render sites and do not allow development localhost origins. Serve the API over HTTPS and configure exact production frontend origins. `GET /health` reports API and MongoDB readiness; unmatched routes return JSON 404 responses.
+
+For the NexTour monorepo, configure Render with root directory `server`, build command `npm ci`, and start command `npm start`. Configure Vercel with root directory `view`, build command `npm run build`, output directory `dist`, and `VITE_API_BASE_URL=https://nextour-1.onrender.com`.
 
 The existing login response issues a JWT when `JWT_SECRET` is configured. Protected APIs validate bearer JWTs and retain validated session-cookie support for existing clients. The frontend stores a returned token and sends it as a bearer token while continuing to send credentialed cookies.
 

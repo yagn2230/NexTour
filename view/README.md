@@ -42,4 +42,4 @@ Run these commands from the `view` directory:
 - `npm run lint` checks the frontend source.
 - `npm run build` creates the production build.
 
-Set `VITE_API_BASE_URL` when the backend is not running at the development default (`http://localhost:5000`).
+Set `VITE_API_BASE_URL` to override the production API (`https://nextour-1.onrender.com`) or local development default (`http://localhost:5000`). For Vercel, use the `view` directory as the project root, `npm run build` as the build command, and `dist` as the output directory.
