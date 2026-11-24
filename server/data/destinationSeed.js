@@ -1,0 +1,98 @@
+module.exports = [
+  {
+    country: "India",
+    state: "Goa",
+    city: "North Goa",
+    famousPlaces: [
+      "Baga Beach",
+      "Calangute Beach",
+      "Fort Aguada",
+      "Anjuna Beach",
+      "Chapora Fort",
+    ],
+  },
+  {
+    country: "India",
+    state: "Goa",
+    city: "South Goa",
+    famousPlaces: ["Palolem Beach", "Colva Beach", "Agonda Beach", "Cabo de Rama Fort"],
+  },
+  {
+    country: "India",
+    state: "Goa",
+    city: "Panaji",
+    famousPlaces: ["Fontainhas", "Dona Paula", "Miramar Beach", "Our Lady of the Immaculate Conception Church"],
+  },
+  {
+    country: "India",
+    state: "Maharashtra",
+    city: "Mumbai",
+    famousPlaces: ["Gateway of India", "Marine Drive", "Elephanta Caves", "Chhatrapati Shivaji Maharaj Terminus"],
+  },
+  {
+    country: "India",
+    state: "Delhi",
+    city: "New Delhi",
+    famousPlaces: ["India Gate", "Red Fort", "Qutub Minar", "Humayun's Tomb", "Lotus Temple"],
+  },
+  {
+    country: "India",
+    state: "Rajasthan",
+    city: "Jaipur",
+    famousPlaces: ["Amber Fort", "Hawa Mahal", "City Palace", "Jantar Mantar"],
+  },
+  {
+    country: "India",
+    state: "Uttar Pradesh",
+    city: "Agra",
+    famousPlaces: ["Taj Mahal", "Agra Fort", "Fatehpur Sikri", "Mehtab Bagh"],
+  },
+  {
+    country: "India",
+    state: "Uttar Pradesh",
+    city: "Varanasi",
+    famousPlaces: ["Dashashwamedh Ghat", "Assi Ghat", "Kashi Vishwanath Temple", "Sarnath"],
+  },
+  {
+    country: "India",
+    state: "Kerala",
+    city: "Cochin",
+    famousPlaces: ["Fort Kochi", "Chinese Fishing Nets", "Mattancherry Palace", "Jew Town"],
+  },
+  {
+    country: "India",
+    state: "Karnataka",
+    city: "Bengaluru",
+    famousPlaces: ["Lalbagh Botanical Garden", "Bangalore Palace", "Cubbon Park", "ISKCON Temple"],
+  },
+  {
+    country: "India",
+    state: "Tamil Nadu",
+    city: "Chennai",
+    famousPlaces: ["Marina Beach", "Kapaleeshwarar Temple", "Fort St. George", "Government Museum"],
+  },
+  {
+    country: "India",
+    state: "West Bengal",
+    city: "Kolkata",
+    famousPlaces: ["Victoria Memorial", "Howrah Bridge", "Dakshineswar Kali Temple", "Indian Museum"],
+  },
+  {
+    country: "India",
+    state: "Jammu and Kashmir",
+    city: "Srinagar",
+    famousPlaces: ["Dal Lake", "Mughal Gardens", "Shankaracharya Temple", "Hazratbal Shrine"],
+  },
+  {
+    country: "India",
+    state: "Himachal Pradesh",
+    city: "Shimla",
+    famousPlaces: ["The Ridge", "Mall Road", "Jakhoo Temple", "Kalka-Shimla Railway"],
+  },
+  {
+    country: "India",
+    state: "Uttarakhand",
+    city: "Dehradun",
+    famousPlaces: ["Robber's Cave", "Sahastradhara", "Forest Research Institute", "Mindrolling Monastery"],
+  },
+];
