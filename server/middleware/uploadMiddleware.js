@@ -30,7 +30,7 @@ const createStorage = (destination, extensions) => multer.diskStorage({
 });
 
 const imageUpload = multer({
-  storage: createStorage(profileRoot, imageExtensions),
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024, files: 1 },
   fileFilter: (req, file, callback) => {
     if (!imageExtensions[file.mimetype]) {
@@ -81,15 +81,20 @@ const validateUploadedContent = async (req, res, next) => {
   ];
   try {
     for (const file of files) {
-      const handle = await fs.promises.open(file.path, "r");
-      const header = Buffer.alloc(12);
-      let bytesRead;
-      try {
-        ({ bytesRead } = await handle.read(header, 0, header.length, 0));
-      } finally {
-        await handle.close();
+      let data;
+      if (Buffer.isBuffer(file.buffer)) {
+        data = file.buffer.subarray(0, 12);
+      } else {
+        const handle = await fs.promises.open(file.path, "r");
+        const header = Buffer.alloc(12);
+        let bytesRead;
+        try {
+          ({ bytesRead } = await handle.read(header, 0, header.length, 0));
+        } finally {
+          await handle.close();
+        }
+        data = header.subarray(0, bytesRead);
       }
-      const data = header.subarray(0, bytesRead);
       const valid = file.mimetype === "image/jpeg"
         ? data.length >= 3 && data[0] === 0xff && data[1] === 0xd8 && data[2] === 0xff
         : file.mimetype === "image/png"

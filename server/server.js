@@ -23,6 +23,7 @@ const settingsRoutes = require("./routes/settingsRoutes");
 const appealRoutes = require("./routes/appealRoutes");
 const { errorHandler } = require("./middleware/errorMiddleware");
 const seedDestinations = require("./services/seedDestinations");
+const { serveProfileImage } = require("./services/profileImageStorage");
 
 if (!process.env.MONGODB_URI) {
   throw new Error("MONGODB_URI must be configured before starting the server.");
@@ -85,6 +86,7 @@ app.use(express.json({
   },
 }));
 app.use(express.urlencoded({ extended: true }));
+app.get("/uploads/profiles/:filename", serveProfileImage);
 app.use(
   "/uploads/profiles",
   express.static(path.join(__dirname, "uploads", "profiles"), {

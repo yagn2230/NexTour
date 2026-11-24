@@ -120,7 +120,7 @@ The frontend admin shell is mounted at `/admin`; its nested pages preserve the s
 
 The frontend clients are `view/src/services/profileService.js` and `view/src/services/organizerService.js`; `view/src/pages/Profile/profileAdapter.js` maps the aggregate profile response into existing profile components. The responsive organizer workspace is served by `view/src/pages/OrganizerDashboardPage.jsx` at `/organizer/dashboard`; traveler public profiles are at `/travelers/:identifier`. Review creation is limited to participants in a completed trip, with one review per reviewer, target, and trip. Trip join requests and user notifications are stored on the existing Trip and User documents.
 
-Profile image uploads accept multipart fields `image`, `profileImage`, or `coverImage`, allow JPEG/PNG/WebP up to 5 MB, and are stored under `uploads/profiles`. Verification uploads use multipart fields `governmentId`, `selfie`, and `addressProof` (optional `passport` and `drivingLicense`), allow supported images or PDF up to 10 MB per file, and are not publicly served. Keep uploads on persistent storage in deployments.
+Profile and cover image uploads accept multipart fields `image`, `profileImage`, or `coverImage`, allow JPEG/PNG/WebP up to 5 MB, and are stored in MongoDB GridFS so they survive Render deploys. They are served from `/uploads/profiles/<uuid>.<ext>`. Verification and no-show evidence files remain on the local filesystem and are not publicly served; configure persistent storage or a private object-storage provider before relying on them in production.
 
 ## Local integration test
 

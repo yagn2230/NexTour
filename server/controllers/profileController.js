@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-const path = require("node:path");
 const User = require("../models/userSchme");
 const Trip = require("../models/Trip");
 const Review = require("../models/Review");
@@ -12,9 +11,9 @@ const {
 const { calculateAverageRating, calculateTravelPoints, calculateRevenue } = require("../utils/calculateStats");
 const { calculateTravelerReliability } = require("../utils/travelerReliability");
 const {
-  removeUploadedFile,
-  storedFileUrl,
-} = require("../middleware/uploadMiddleware");
+  removeProfileImage,
+  storeProfileImage,
+} = require("../services/profileImageStorage");
 
 const requestUserId = (req) => req.authUser?.id || req.session?.user?.id;
 
@@ -276,16 +275,19 @@ const updateProfileImage = (field) => asyncHandler(async (req, res) => {
   }
   const user = await User.findById(requestUserId(req));
   if (!user) {
-    await removeUploadedFile(uploadedFile.path);
     return res.status(404).json({ success: false, message: "User not found." });
   }
   const priorImage = user[field];
-  user[field] = storedFileUrl(uploadedFile);
-  await user.save();
-  if (priorImage?.startsWith("/uploads/profiles/")) {
-    await removeUploadedFile(path.join(__dirname, "..", "uploads", "profiles", path.basename(priorImage)));
+  const imageUrl = await storeProfileImage(uploadedFile);
+  user[field] = imageUrl;
+  try {
+    await user.save();
+  } catch (error) {
+    await removeProfileImage(imageUrl);
+    throw error;
   }
-  res.json({ success: true, message: "Image updated successfully.", data: { [field]: user[field] } });
+  await removeProfileImage(priorImage);
+  res.json({ success: true, message: "Image updated successfully.", data: { [field]: imageUrl } });
 });
 
 const deleteProfileImage = (field) => asyncHandler(async (req, res) => {
@@ -294,9 +296,7 @@ const deleteProfileImage = (field) => asyncHandler(async (req, res) => {
   const priorImage = user[field];
   user[field] = "";
   await user.save();
-  if (priorImage?.startsWith("/uploads/profiles/")) {
-    await removeUploadedFile(path.join(__dirname, "..", "uploads", "profiles", path.basename(priorImage)));
-  }
+  await removeProfileImage(priorImage);
   res.json({ success: true, message: "Image deleted successfully.", data: { [field]: "" } });
 });
 
